@@ -1,5 +1,6 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Produto;
 import com.ecommerce.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -19,32 +19,38 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
+    @Transactional(readOnly = true)
+    public List<Produto> listarTodosProdutos() {
+        return produtoRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Produto buscarProdutoPorId(Long id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com id: " + id));
+    }
+
     @Transactional
     public Produto criarProduto(Produto produto) {
         return produtoRepository.save(produto);
     }
 
-    public List<Produto> listarTodosProdutos() {
-        return produtoRepository.findAll();
-    }
-
-    public Optional<Produto> buscarProdutoPorId(Long id) {
-        return produtoRepository.findById(id);
-    }
-
     @Transactional
     public Produto atualizarProduto(Long id, Produto produtoAtualizado) {
         return produtoRepository.findById(id)
-            .map(produto -> {
-                produto.setNome(produtoAtualizado.getNome());
-                produto.setPreco(produtoAtualizado.getPreco());
-                return produtoRepository.save(produto);
-            })
-            .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .map(produto -> {
+                    produto.setNome(produtoAtualizado.getNome());
+                    produto.setPreco(produtoAtualizado.getPreco());
+                    return produtoRepository.save(produto);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com id: " + id));
     }
 
     @Transactional
     public void deletarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Produto não encontrado com id: " + id);
+        }
         produtoRepository.deleteById(id);
     }
 }

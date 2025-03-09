@@ -34,19 +34,14 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> buscarPedidoPorId(@PathVariable Long id) {
-        return pedidoService.buscarPedidoPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Pedido pedido = pedidoService.buscarPedidoPorId(id);
+        return ResponseEntity.ok(pedido);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody Pedido pedido) {
-        try {
-            Pedido pedidoAtualizado = pedidoService.atualizarPedido(id, pedido);
-            return ResponseEntity.ok(pedidoAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Pedido pedidoAtualizado = pedidoService.atualizarPedido(id, pedido);
+        return ResponseEntity.ok(pedidoAtualizado);
     }
 
     @DeleteMapping("/{id}")

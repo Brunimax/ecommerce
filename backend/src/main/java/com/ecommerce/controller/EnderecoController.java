@@ -34,19 +34,14 @@ public class EnderecoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Endereco> buscarEnderecoPorId(@PathVariable Long id) {
-        return enderecoService.buscarEnderecoPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Endereco endereco = enderecoService.buscarEnderecoPorId(id);
+        return ResponseEntity.ok(endereco);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Endereco> atualizarEndereco(@PathVariable Long id, @RequestBody Endereco endereco) {
-        try {
-            Endereco enderecoAtualizado = enderecoService.atualizarEndereco(id, endereco);
-            return ResponseEntity.ok(enderecoAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Endereco enderecoAtualizado = enderecoService.atualizarEndereco(id, endereco);
+        return ResponseEntity.ok(enderecoAtualizado);
     }
 
     @DeleteMapping("/{id}")

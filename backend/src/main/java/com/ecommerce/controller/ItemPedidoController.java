@@ -27,37 +27,26 @@ public class ItemPedidoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemPedido>> listarTodosItensPedido() {
-        List<ItemPedido> itensPedido = itemPedidoService.listarTodosItensPedido();
-        return ResponseEntity.ok(itensPedido);
+    public ResponseEntity<List<ItemPedido>> listarTodosItens() {
+        List<ItemPedido> itens = itemPedidoService.listarTodosItensPedido();
+        return ResponseEntity.ok(itens);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemPedido> buscarItemPedidoPorId(@PathVariable Long id) {
-        return itemPedidoService.buscarItemPedidoPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ItemPedido> buscarItemPorId(@PathVariable Long id) {
+        ItemPedido item = itemPedidoService.buscarItemPedidoPorId(id);
+        return ResponseEntity.ok(item);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ItemPedido> atualizarItemPedido(@PathVariable Long id, @RequestBody ItemPedido itemPedido) {
-        try {
-            ItemPedido itemPedidoAtualizado = itemPedidoService.atualizarItemPedido(id, itemPedido);
-            return ResponseEntity.ok(itemPedidoAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ItemPedido> atualizarItem(@PathVariable Long id, @RequestBody ItemPedido itemAtualizado) {
+        ItemPedido itemAtualizadoRetornado = itemPedidoService.atualizarItemPedido(id, itemAtualizado);
+        return ResponseEntity.ok(itemAtualizadoRetornado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarItemPedido(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarItem(@PathVariable Long id) {
         itemPedidoService.deletarItemPedido(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/pedido/{pedidoId}")
-    public ResponseEntity<List<ItemPedido>> buscarItensPorPedidoId(@PathVariable Long pedidoId) {
-        List<ItemPedido> itens = itemPedidoService.buscarItensPorPedidoId(pedidoId);
-        return ResponseEntity.ok(itens);
     }
 }

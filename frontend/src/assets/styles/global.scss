@@ -1,0 +1,7 @@
+@import '~vuetify/src/styles/styles.sass';
+
+$primary: #03055B; 
+
+.v-application {
+  .primary { background-color: $primary !important; }
+}

@@ -17,9 +17,6 @@ public class Pedido {
     
     @ManyToOne
     private Endereco endereco;
-    
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private List<ItemPedido> itens;
 
     // Getters e Setters
     public Long getId() {
@@ -52,14 +49,6 @@ public class Pedido {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
-    }
-
-    public List<ItemPedido> getProdutos() {
-        return itens;
-    }
-
-    public void setItens(List<ItemPedido> itens) {
-        this.itens = itens;
     }
 }
 

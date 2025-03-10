@@ -2,6 +2,8 @@ package com.ecommerce.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,8 +20,11 @@ public class Produto {
     @Column(nullable = false)
     private BigDecimal preco;
 
-    @ManyToMany(mappedBy = "produtos")
-    private Set<Pedido> pedidos;
+    public Produto(String string, BigDecimal valueOf) {
+    }
+
+    public Produto() {
+    }
 
     // Getters e Setters
     public Long getId() {
@@ -44,14 +49,6 @@ public class Produto {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
-    }
-
-    public Set<Pedido> getPedidos() {
-        return pedidos;
-    }
-
-    public void setPedidos(Set<Pedido> pedidos) {
-        this.pedidos = pedidos;
     }
 }
 

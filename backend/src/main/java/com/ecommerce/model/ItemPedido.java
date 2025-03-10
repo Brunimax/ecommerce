@@ -8,22 +8,20 @@ import java.math.BigDecimal;
 @Table(name = "item_pedido")
 public class ItemPedido implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private ItemPedidoId id; // Chave composta (pedido_id + produto_id)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pedido_id", nullable = false)
+    @ManyToOne
+    @MapsId("pedidoId") // Vincula ao pedidoId na chave composta
+    @JoinColumn(name = "pedido_id", insertable = false, updatable = false)
     private Pedido pedido;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "produto_id", nullable = false)
+    @ManyToOne
+    @MapsId("produtoId") // Vincula ao produtoId na chave composta
+    @JoinColumn(name = "produto_id", insertable = false, updatable = false)
     private Produto produto;
 
-    @Column(nullable = false)
     private Integer quantidade;
-
-    @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precoUnitario;
 
     // Construtor padrão
@@ -38,11 +36,11 @@ public class ItemPedido implements Serializable {
     }
 
     // Getters e Setters
-    public Long getId() {
+    public ItemPedidoId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(ItemPedidoId id) {
         this.id = id;
     }
 

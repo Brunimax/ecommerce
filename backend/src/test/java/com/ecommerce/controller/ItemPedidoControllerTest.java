@@ -30,7 +30,6 @@ public class ItemPedidoControllerTest {
     @Test
     public void testCriarItemPedido() throws Exception {
         ItemPedido itemPedido = new ItemPedido();
-        itemPedido.setId(1L);
         itemPedido.setQuantidade(2);
         when(itemPedidoService.criarItemPedido(any(ItemPedido.class))).thenReturn(itemPedido);
 

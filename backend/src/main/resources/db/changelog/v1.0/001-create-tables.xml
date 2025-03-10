@@ -45,7 +45,12 @@
         <createTable tableName="item_pedido">
             <column name="pedido_id" type="BIGINT"/>
             <column name="produto_id" type="BIGINT"/>
-            <column name="quantidade" type="INT"/>
+            <column name="quantidade" type="INTEGER"/>
+            <column name="preco_unitario" type="DECIMAL(10,2)"/>
         </createTable>
+    
+        <addPrimaryKey 
+            tableName="item_pedido"
+            columnNames="pedido_id, produto_id"/>
     </changeSet>
 </databaseChangeLog>

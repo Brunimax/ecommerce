@@ -29,7 +29,6 @@ class ItemPedidoServiceTest {
     @DisplayName("Deve atualizar item do pedido com sucesso")
     void testAtualizarItemPedido_Sucesso() {
         ItemPedido itemExistente = new ItemPedido();
-        itemExistente.setId(1L);
         
         ItemPedido itemAtualizado = new ItemPedido();
         itemAtualizado.setQuantidade(5);

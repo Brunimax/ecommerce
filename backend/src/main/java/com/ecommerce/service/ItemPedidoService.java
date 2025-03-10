@@ -42,6 +42,7 @@ public class ItemPedidoService {
                     item.setQuantidade(itemAtualizado.getQuantidade());
                     item.setProduto(itemAtualizado.getProduto());
                     item.setPrecoUnitario(itemAtualizado.getPrecoUnitario());
+                    item.setPedido(itemAtualizado.getPedido());
                     return itemPedidoRepository.save(item);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Item do pedido não encontrado com id: " + id));

@@ -2,13 +2,11 @@
     <v-dialog v-model="dialogo" max-width="400px" persistent>
       <v-card>
         <v-card-title class="headline">{{ titulo }}</v-card-title>
-        <v-card-text>
-          {{ mensagem }}
-        </v-card-text>
+        <v-card-text>{{ mensagem }}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="$emit('cancelar')">Cancelar</v-btn>
-          <v-btn color="error" @click="$emit('confirmar')">Confirmar</v-btn>
+          <v-btn text @click="fechar">Cancelar</v-btn>
+          <v-btn color="error" @click="confirmar">Confirmar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -25,7 +23,7 @@
         type: String,
         required: true
       },
-      valor: {
+      value: { // Alterado de 'valor' para 'value'
         type: Boolean,
         required: true
       }
@@ -33,11 +31,20 @@
     computed: {
       dialogo: {
         get() {
-          return this.valor
+          return this.value
         },
         set(valor) {
           this.$emit('input', valor)
         }
+      }
+    },
+    methods: {
+      fechar() {
+        this.$emit('input', false)
+      },
+      confirmar() {
+        this.$emit('confirmar')
+        this.fechar()
       }
     }
   }

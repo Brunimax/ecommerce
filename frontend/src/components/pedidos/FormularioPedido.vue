@@ -7,9 +7,9 @@
   
         <v-card-text>
           <v-form ref="form">
-            <!-- Dados do Cliente -->
+            <!-- Campo corrigido para camelCase -->
             <v-text-field
-              v-model="pedidoLocal.nome_cliente"
+              v-model="pedidoLocal.nomeCliente"
               label="Nome do Cliente"
               :rules="[v => !!v || 'Campo obrigatório']"
             ></v-text-field>
@@ -90,6 +90,7 @@
           </v-form>
         </v-card-text>
   
+        <!-- Botões de Ação (Corrigir posicionamento) -->
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="$emit('fechar')">Cancelar</v-btn>
@@ -105,22 +106,29 @@
   export default {
     props: ['pedido'],
     data: () => ({
-      pedidoLocal: null, // Cópia local da prop `pedido`
+      pedidoLocal: null,
       produtos: [],
       produtoSelecionado: null,
       quantidade: 1,
       carregandoProdutos: false
     }),
+    computed: {
+      dialog: {
+        get() { return !!this.pedido },
+        set() { this.$emit('fechar') }
+      }
+    },
     watch: {
       pedido: {
         immediate: true,
         handler(newVal) {
-          this.pedidoLocal = JSON.parse(JSON.stringify(newVal)) // Cria uma cópia profunda
+          this.pedidoLocal = {
+            ...newVal,
+            nomeCliente: newVal?.nome_cliente || newVal?.nomeCliente || '',
+            endereco: newVal?.endereco || {}
+          }
         }
       }
-    },
-    async mounted() {
-      await this.carregarProdutos()
     },
     methods: {
       async carregarProdutos() {
@@ -163,7 +171,7 @@
       },
   
       salvar() {
-        this.$emit('salvar', JSON.parse(JSON.stringify(this.pedidoLocal))) // Emite a cópia para o pai
+        this.$emit('salvar', JSON.parse(JSON.stringify(this.pedidoLocal)))
       },
   
       formatarPreco(preco) {
@@ -175,6 +183,4 @@
     }
   }
   </script>
-  
-  <style scoped></style>
   

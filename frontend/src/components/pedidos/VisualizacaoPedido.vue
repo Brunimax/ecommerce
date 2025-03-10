@@ -9,7 +9,7 @@
           <v-list>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>Cliente: {{ pedido.nome_cliente }}</v-list-item-title>
+                <v-list-item-title>Cliente: {{ pedido.nomeCliente }}</v-list-item-title>
                 <v-list-item-subtitle>Status: {{ pedido.status }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -53,8 +53,8 @@
         set() { this.$emit('fechar') }
       },
       enderecoCompleto() {
-        const e = this.pedido.endereco
-        return `${e.rua}, ${e.bairro}, ${e.cidade}/${e.uf} - CEP: ${e.cep}`
+        const e = this.pedido.endereco || {}
+        return `${e.rua || ''}, ${e.bairro || ''}, ${e.cidade || ''}/${e.uf || ''} - CEP: ${e.cep || ''}`
       }
     },
     methods: {
@@ -62,7 +62,7 @@
         return new Intl.NumberFormat('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        }).format(preco)
+        }).format(preco || 0)
       }
     }
   }

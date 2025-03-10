@@ -5,7 +5,6 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <!-- Incluir todos os changelogs na ordem de execução -->
     <include file="db/changelog/v1.0/001-create-tables.xml"/>
     <include file="db/changelog/v1.0/002-add-constraints.xml"/>
     <include file="db/changelog/v1.0/003-insert-test-data.xml"/>

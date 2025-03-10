@@ -8,11 +8,19 @@ import java.util.List;
 @Table(name = "pedidos")
 public class Pedido {
 
+    public static final String STATUS_CRIADO = "CRIADO";
+    public static final String STATUS_PROCESSANDO = "PROCESSANDO";
+    public static final String STATUS_ENTREGUE = "ENTREGUE";
+    public static final String STATUS_CANCELADO = "CANCELADO";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Column(nullable = false)
     private String nomeCliente;
+
+    @Column(nullable = false, length = 20)
     private String status;
     
     @ManyToOne

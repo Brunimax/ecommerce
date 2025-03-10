@@ -6,36 +6,52 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="003-01" author="Brunimax">
+        <preConditions>
+            <tableExists tableName="enderecos"/>
+            <tableExists tableName="produtos"/>
+            <tableExists tableName="pedidos"/>
+            <tableExists tableName="item_pedido"/>
+        </preConditions>
+
         <!-- Endereços -->
         <insert tableName="enderecos">
+            <column name="id" value="1"/>
             <column name="rua" value="Av. Paulista, 1000"/>
             <column name="bairro" value="Bela Vista"/>
             <column name="cidade" value="São Paulo"/>
             <column name="uf" value="SP"/>
             <column name="cep" value="01310930"/>
         </insert>
+
         <insert tableName="enderecos">
+            <column name="id" value="2"/>
             <column name="rua" value="Rua XV de Novembro, 456"/>
             <column name="bairro" value="Centro"/>
             <column name="cidade" value="Curitiba"/>
             <column name="uf" value="PR"/>
             <column name="cep" value="80020910"/>
         </insert>
+
         <insert tableName="enderecos">
+            <column name="id" value="3"/>
             <column name="rua" value="Rua das Acácias, 789"/>
             <column name="bairro" value="Jardins"/>
             <column name="cidade" value="Rio de Janeiro"/>
             <column name="uf" value="RJ"/>
             <column name="cep" value="22451020"/>
         </insert>
+
         <insert tableName="enderecos">
+            <column name="id" value="4"/>
             <column name="rua" value="Av. Independência, 321"/>
             <column name="bairro" value="Boa Vista"/>
             <column name="cidade" value="Porto Alegre"/>
             <column name="uf" value="RS"/>
             <column name="cep" value="90450090"/>
         </insert>
+
         <insert tableName="enderecos">
+            <column name="id" value="5"/>
             <column name="rua" value="Rua Amazonas, 55"/>
             <column name="bairro" value="Savassi"/>
             <column name="cidade" value="Belo Horizonte"/>
@@ -45,48 +61,66 @@
 
         <!-- Produtos -->
         <insert tableName="produtos">
+            <column name="id" value="1"/>
             <column name="nome" value="Smartphone Samsung Galaxy S23"/>
             <column name="preco" value="3999.90"/>
         </insert>
+
         <insert tableName="produtos">
+            <column name="id" value="2"/>
             <column name="nome" value="Fone de Ouvido Sony WH-1000XM5"/>
             <column name="preco" value="1899.00"/>
         </insert>
+
         <insert tableName="produtos">
+            <column name="id" value="3"/>
             <column name="nome" value="Notebook Dell XPS 13"/>
             <column name="preco" value="8499.00"/>
         </insert>
+
         <insert tableName="produtos">
+            <column name="id" value="4"/>
             <column name="nome" value="Smartwatch Apple Watch Series 9"/>
             <column name="preco" value="3999.00"/>
         </insert>
+
         <insert tableName="produtos">
+            <column name="id" value="5"/>
             <column name="nome" value="Monitor LG UltraGear 27' 240Hz"/>
             <column name="preco" value="2799.90"/>
         </insert>
 
         <!-- Pedidos -->
         <insert tableName="pedidos">
+            <column name="id" value="1"/>
             <column name="nome_cliente" value="Ana Carolina Silva"/>
             <column name="status" value="CRIADO"/>
             <column name="endereco_id" value="1"/>
         </insert>
+
         <insert tableName="pedidos">
+            <column name="id" value="2"/>
             <column name="nome_cliente" value="Bruno Marques"/>
             <column name="status" value="PROCESSANDO"/>
             <column name="endereco_id" value="2"/>
         </insert>
+
         <insert tableName="pedidos">
+            <column name="id" value="3"/>
             <column name="nome_cliente" value="Fernanda Lima"/>
             <column name="status" value="ENVIADO"/>
             <column name="endereco_id" value="3"/>
         </insert>
+
         <insert tableName="pedidos">
+            <column name="id" value="4"/>
             <column name="nome_cliente" value="Carlos Eduardo"/>
             <column name="status" value="ENTREGUE"/>
             <column name="endereco_id" value="4"/>
         </insert>
+
         <insert tableName="pedidos">
+            <column name="id" value="5"/>
             <column name="nome_cliente" value="Mariana Souza"/>
             <column name="status" value="CANCELADO"/>
             <column name="endereco_id" value="5"/>
@@ -97,27 +131,35 @@
             <column name="pedido_id" value="1"/>
             <column name="produto_id" value="1"/>
             <column name="quantidade" value="2"/>
+            <column name="preco_unitario" valueComputed="(SELECT preco FROM produtos WHERE id = 1)"/>
         </insert>
+
         <insert tableName="item_pedido">
             <column name="pedido_id" value="2"/>
             <column name="produto_id" value="3"/>
             <column name="quantidade" value="1"/>
+            <column name="preco_unitario" valueComputed="(SELECT preco FROM produtos WHERE id = 3)"/>
         </insert>
+
         <insert tableName="item_pedido">
             <column name="pedido_id" value="3"/>
             <column name="produto_id" value="2"/>
             <column name="quantidade" value="1"/>
+            <column name="preco_unitario" valueComputed="(SELECT preco FROM produtos WHERE id = 2)"/>
         </insert>
+
         <insert tableName="item_pedido">
             <column name="pedido_id" value="4"/>
             <column name="produto_id" value="4"/>
             <column name="quantidade" value="3"/>
+            <column name="preco_unitario" valueComputed="(SELECT preco FROM produtos WHERE id = 4)"/>
         </insert>
+
         <insert tableName="item_pedido">
             <column name="pedido_id" value="5"/>
             <column name="produto_id" value="5"/>
             <column name="quantidade" value="2"/>
+            <column name="preco_unitario" valueComputed="(SELECT preco FROM produtos WHERE id = 5)"/>
         </insert>
-
     </changeSet>
 </databaseChangeLog>

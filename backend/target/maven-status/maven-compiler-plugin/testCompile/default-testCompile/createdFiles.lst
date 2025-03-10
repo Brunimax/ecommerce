@@ -1,0 +1,10 @@
+com\ecommerce\controller\EnderecoControllerTest.class
+com\ecommerce\service\ProdutoServiceTest.class
+com\ecommerce\service\PedidoServiceTest.class
+com\ecommerce\controller\PedidoControllerTest.class
+com\ecommerce\service\ItemPedidoServiceTest.class
+com\ecommerce\controller\ItemPedidoControllerTest.class
+com\ecommerce\controller\ProdutoControllerTest.class
+com\ecommerce\model\ItemPedidoIdTest.class
+com\ecommerce\service\EnderecoServiceTest.class
+com\ecommerce\repository\ItemPedidoRepositoryTest.class

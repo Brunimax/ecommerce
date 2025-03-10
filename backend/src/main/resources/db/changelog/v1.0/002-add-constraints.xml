@@ -2,24 +2,46 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
+    <!-- FK para pedidos -->
     <changeSet id="002-01" author="Brunimax">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_pedido_endereco"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint
             baseTableName="pedidos"
             baseColumnNames="endereco_id"
             referencedTableName="enderecos"
             referencedColumnNames="id"
             constraintName="fk_pedido_endereco"/>
+    </changeSet>
 
+    <!-- FK para pedido_id -->
+    <changeSet id="002-02" author="Brunimax">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_item_pedido_pedido"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint
             baseTableName="item_pedido"
             baseColumnNames="pedido_id"
             referencedTableName="pedidos"
             referencedColumnNames="id"
             constraintName="fk_item_pedido_pedido"/>
+    </changeSet>
 
+    <!-- FK para produto_id -->
+    <changeSet id="002-03" author="Brunimax">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_item_pedido_produto"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint
             baseTableName="item_pedido"
             baseColumnNames="produto_id"

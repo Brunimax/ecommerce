@@ -2,10 +2,11 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="001-01" author="Brunimax">
+        <!-- Tabela enderecos -->
         <createTable tableName="enderecos">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -17,6 +18,7 @@
             <column name="cep" type="CHAR(8)"/>
         </createTable>
 
+        <!-- Tabela produtos -->
         <createTable tableName="produtos">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -29,6 +31,7 @@
             </column>
         </createTable>
 
+        <!-- Tabela pedidos -->
         <createTable tableName="pedidos">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -36,19 +39,24 @@
             <column name="nome_cliente" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="VARCHAR(50)">
+            <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
             <column name="endereco_id" type="BIGINT"/>
         </createTable>
 
+        <!-- Tabela item_pedido -->
         <createTable tableName="item_pedido">
             <column name="pedido_id" type="BIGINT"/>
             <column name="produto_id" type="BIGINT"/>
-            <column name="quantidade" type="INTEGER"/>
-            <column name="preco_unitario" type="DECIMAL(10,2)"/>
+            <column name="quantidade" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preco_unitario" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-    
+
         <addPrimaryKey 
             tableName="item_pedido"
             columnNames="pedido_id, produto_id"/>

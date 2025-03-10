@@ -7,19 +7,24 @@
   
         <v-card-text>
           <v-form ref="form">
-            <!-- Campo corrigido para camelCase -->
+            <!-- Campo do Cliente -->
             <v-text-field
               v-model="pedidoLocal.nomeCliente"
               label="Nome do Cliente"
               :rules="[v => !!v || 'Campo obrigatório']"
             ></v-text-field>
   
-            <!-- Busca de Endereço por CEP -->
+            <!-- Campo de CEP com máscara -->
             <v-text-field
-              v-model="pedidoLocal.endereco.cep"
+              v-model="cepFormatado"
               label="CEP"
+              placeholder="00000-000"
+              v-mask="'#####-###'"
               @blur="buscarEndereco"
-              :rules="[v => /^[0-9]{8}$/.test(v) || 'CEP inválido']"
+              :rules="[
+                v => !!v || 'CEP obrigatório',
+                v => /^[0-9]{5}-[0-9]{3}$/.test(v) || 'CEP inválido'
+              ]"
             ></v-text-field>
   
             <!-- Campos de Endereço -->
@@ -28,12 +33,30 @@
                 <v-text-field
                   v-model="pedidoLocal.endereco.rua"
                   label="Rua"
+                  :rules="[v => !!v || 'Campo obrigatório']"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
                 <v-text-field
                   v-model="pedidoLocal.endereco.bairro"
                   label="Bairro"
+                  :rules="[v => !!v || 'Campo obrigatório']"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="8">
+                <v-text-field
+                  v-model="pedidoLocal.endereco.cidade"
+                  label="Cidade"
+                  :rules="[v => !!v || 'Campo obrigatório']"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="pedidoLocal.endereco.uf"
+                  label="UF"
+                  :rules="[v => !!v || 'Campo obrigatório']"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -90,7 +113,6 @@
           </v-form>
         </v-card-text>
   
-        <!-- Botões de Ação (Corrigir posicionamento) -->
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="$emit('fechar')">Cancelar</v-btn>
@@ -102,8 +124,10 @@
   
   <script>
   import api from '@/services/api'
+  import { mask } from 'vue-the-mask'
   
   export default {
+    directives: { mask },
     props: ['pedido'],
     data: () => ({
       pedidoLocal: null,
@@ -116,6 +140,14 @@
       dialog: {
         get() { return !!this.pedido },
         set() { this.$emit('fechar') }
+      },
+      cepFormatado: {
+        get() {
+          return this.pedidoLocal.endereco.cep?.replace(/(\d{5})(\d{3})/, '$1-$2') || ''
+        },
+        set(value) {
+          this.pedidoLocal.endereco.cep = value.replace(/\D/g, '')
+        }
       }
     },
     watch: {
@@ -144,13 +176,32 @@
       },
   
       async buscarEndereco() {
-        if (this.pedidoLocal.endereco.cep?.length === 8) {
-          try {
-            const response = await api.get(`/enderecos/${this.pedidoLocal.endereco.cep}`)
-            this.pedidoLocal.endereco = response.data
-          } catch (error) {
-            console.error('CEP não encontrado:', error)
+        const cep = this.pedidoLocal.endereco.cep.replace(/\D/g, '')
+        
+        if (cep.length !== 8) return
+        
+        try {
+          const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          const data = await response.json()
+          
+          if (data.erro) {
+            throw new Error('CEP não encontrado')
           }
+  
+          this.pedidoLocal.endereco = {
+            cep: data.cep.replace(/\D/g, ''),
+            rua: data.logradouro || '',
+            bairro: data.bairro || '',
+            cidade: data.localidade || '',
+            uf: data.uf || '',
+          }
+          
+        } catch (error) {
+          console.error('Erro na busca do CEP:', error)
+          this.$store.dispatch('showSnackbar', {
+            message: 'CEP não encontrado. Verifique o número digitado',
+            color: 'error'
+          })
         }
       },
   
@@ -171,7 +222,15 @@
       },
   
       salvar() {
-        this.$emit('salvar', JSON.parse(JSON.stringify(this.pedidoLocal)))
+        // Garante que o CEP seja salvo sem máscara
+        const pedidoParaSalvar = {
+          ...this.pedidoLocal,
+          endereco: {
+            ...this.pedidoLocal.endereco,
+            cep: this.pedidoLocal.endereco.cep.replace(/\D/g, '')
+          }
+        }
+        this.$emit('salvar', pedidoParaSalvar)
       },
   
       formatarPreco(preco) {
@@ -180,6 +239,9 @@
           currency: 'BRL'
         }).format(preco)
       }
+    },
+    mounted() {
+      this.carregarProdutos()
     }
   }
   </script>

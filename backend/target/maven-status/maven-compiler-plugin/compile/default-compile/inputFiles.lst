@@ -16,12 +16,15 @@ C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecomme
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\exception\BadRequestException.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\service\ItemPedidoService.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\exception\GlobalExceptionHandler.java
+C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\dto\ProdutoDTO.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\model\ItemPedido.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\config\SwaggerConfig.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\model\Endereco.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\controller\PedidoController.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\dto\PedidoMensagemDTO.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\service\PedidoService.java
+C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\security\SecurityConfig.java
+C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\dto\PedidoProdutosDTO.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\exception\ResourceNotFoundException.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\repository\PedidoRepository.java
 C:\Users\ServiInfo\Documents\projetos\ecommerce\backend\src\main\java\com\ecommerce\config\CorsConfig.java

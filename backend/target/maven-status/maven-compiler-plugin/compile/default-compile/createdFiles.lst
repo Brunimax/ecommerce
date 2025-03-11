@@ -7,9 +7,11 @@ com\ecommerce\dto\PedidoMensagemDTO.class
 com\ecommerce\exception\GlobalExceptionHandler.class
 com\ecommerce\model\Produto.class
 com\ecommerce\repository\ProdutoRepository.class
+com\ecommerce\dto\PedidoProdutosDTO.class
 com\ecommerce\config\CorsConfig$1.class
 com\ecommerce\controller\EnderecoController.class
 com\ecommerce\EcommerceApplication.class
+com\ecommerce\security\SecurityConfig.class
 com\ecommerce\model\Endereco.class
 com\ecommerce\model\ItemPedido.class
 com\ecommerce\config\CorsConfig.class
@@ -22,6 +24,7 @@ com\ecommerce\service\PedidoService.class
 com\ecommerce\config\WebConfig.class
 com\ecommerce\config\RabbitMQConfig.class
 com\ecommerce\repository\ItemPedidoRepository.class
+com\ecommerce\dto\ProdutoDTO.class
 com\ecommerce\controller\PedidoController.class
 com\ecommerce\repository\EnderecoRepository.class
 com\ecommerce\repository\PedidoRepository.class

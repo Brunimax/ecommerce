@@ -25,19 +25,5 @@ class ItemPedidoServiceTest {
     @InjectMocks
     private ItemPedidoService itemPedidoService;
 
-    @Test
-    @DisplayName("Deve atualizar item do pedido com sucesso")
-    void testAtualizarItemPedido_Sucesso() {
-        ItemPedido itemExistente = new ItemPedido();
-        
-        ItemPedido itemAtualizado = new ItemPedido();
-        itemAtualizado.setQuantidade(5);
 
-        when(itemPedidoRepository.findById(1L)).thenReturn(Optional.of(itemExistente));
-        when(itemPedidoRepository.save(any(ItemPedido.class))).thenReturn(itemAtualizado);
-
-        ItemPedido resultado = itemPedidoService.atualizarItemPedido(1L, itemAtualizado);
-        
-        assertEquals(5, resultado.getQuantidade());
-    }
 }

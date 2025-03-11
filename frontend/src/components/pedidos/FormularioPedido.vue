@@ -7,14 +7,12 @@
   
         <v-card-text>
           <v-form ref="form">
-            <!-- Campo do Cliente -->
             <v-text-field
               v-model="pedidoLocal.nomeCliente"
               label="Nome do Cliente"
               :rules="[v => !!v || 'Campo obrigatório']"
             ></v-text-field>
   
-            <!-- Campo de CEP com máscara -->
             <v-text-field
               v-model="cepFormatado"
               label="CEP"
@@ -27,7 +25,6 @@
               ]"
             ></v-text-field>
   
-            <!-- Campos de Endereço -->
             <v-row>
               <v-col cols="8">
                 <v-text-field
@@ -44,6 +41,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+  
             <v-row>
               <v-col cols="8">
                 <v-text-field
@@ -56,12 +54,14 @@
                 <v-text-field
                   v-model="pedidoLocal.endereco.uf"
                   label="UF"
-                  :rules="[v => !!v || 'Campo obrigatório']"
+                  :rules="[
+                    v => !!v || 'Campo obrigatório',
+                    v => (v && v.length === 2) || 'UF deve ter 2 caracteres'
+                  ]"
                 ></v-text-field>
               </v-col>
             </v-row>
   
-            <!-- Seleção de Produtos -->
             <v-autocomplete
               v-model="produtoSelecionado"
               :items="produtos"
@@ -71,7 +71,6 @@
               :loading="carregandoProdutos"
             ></v-autocomplete>
   
-            <!-- Quantidade e Adição -->
             <v-row>
               <v-col cols="3">
                 <v-text-field
@@ -79,6 +78,7 @@
                   type="number"
                   label="Quantidade"
                   min="1"
+                  :rules="[v => v > 0 || 'Quantidade mínima: 1']"
                 ></v-text-field>
               </v-col>
               <v-col cols="9">
@@ -92,16 +92,15 @@
               </v-col>
             </v-row>
   
-            <!-- Itens do Pedido -->
-            <v-list>
+            <v-list v-if="pedidoLocal.produtos.length">
               <v-list-item 
-                v-for="(item, index) in pedidoLocal.itens" 
+                v-for="(item, index) in pedidoLocal.produtos" 
                 :key="index"
               >
                 <v-list-item-content>
                   {{ item.produto.nome }} - 
                   {{ item.quantidade }} x 
-                  {{ formatarPreco(item.preco_unitario) }}
+                  {{ formatarPreco(item.produto.preco) }}
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="removerItem(index)">
@@ -130,7 +129,12 @@
     directives: { mask },
     props: ['pedido'],
     data: () => ({
-      pedidoLocal: null,
+      pedidoLocal: {
+        nomeCliente: '',
+        status: 'CRIADO',
+        endereco: {},
+        produtos: []
+      },
       produtos: [],
       produtoSelecionado: null,
       quantidade: 1,
@@ -153,11 +157,17 @@
     watch: {
       pedido: {
         immediate: true,
+        deep: true,
         handler(newVal) {
-          this.pedidoLocal = {
+          this.pedidoLocal = newVal ? { 
             ...newVal,
-            nomeCliente: newVal?.nome_cliente || newVal?.nomeCliente || '',
-            endereco: newVal?.endereco || {}
+            endereco: newVal.endereco || {},
+            produtos: newVal.produtos || []
+          } : {
+            nomeCliente: '',
+            status: 'CRIADO',
+            endereco: {},
+            produtos: []
           }
         }
       }
@@ -177,29 +187,24 @@
   
       async buscarEndereco() {
         const cep = this.pedidoLocal.endereco.cep.replace(/\D/g, '')
-        
         if (cep.length !== 8) return
         
         try {
           const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
           const data = await response.json()
           
-          if (data.erro) {
-            throw new Error('CEP não encontrado')
-          }
-  
+          if (data.erro) throw new Error('CEP não encontrado')
+          
           this.pedidoLocal.endereco = {
-            cep: data.cep.replace(/\D/g, ''),
+            cep: cep,
             rua: data.logradouro || '',
             bairro: data.bairro || '',
             cidade: data.localidade || '',
-            uf: data.uf || '',
+            uf: data.uf || ''
           }
-          
         } catch (error) {
-          console.error('Erro na busca do CEP:', error)
           this.$store.dispatch('showSnackbar', {
-            message: 'CEP não encontrado. Verifique o número digitado',
+            message: 'CEP inválido ou não encontrado',
             color: 'error'
           })
         }
@@ -207,37 +212,29 @@
   
       adicionarItem() {
         const produto = this.produtos.find(p => p.id === this.produtoSelecionado)
-        this.pedidoLocal.itens.push({
-          produto_id: produto.id,
-          produto,
-          quantidade: this.quantidade,
-          preco_unitario: produto.preco
+        this.pedidoLocal.produtos.push({
+          produto: produto,
+          quantidade: this.quantidade
         })
         this.produtoSelecionado = null
         this.quantidade = 1
       },
   
       removerItem(index) {
-        this.pedidoLocal.itens.splice(index, 1)
+        this.pedidoLocal.produtos.splice(index, 1)
       },
   
       salvar() {
-        // Garante que o CEP seja salvo sem máscara
-        const pedidoParaSalvar = {
-          ...this.pedidoLocal,
-          endereco: {
-            ...this.pedidoLocal.endereco,
-            cep: this.pedidoLocal.endereco.cep.replace(/\D/g, '')
-          }
+        if (this.$refs.form.validate()) {
+          this.$emit('salvar', this.pedidoLocal)
         }
-        this.$emit('salvar', pedidoParaSalvar)
       },
   
       formatarPreco(preco) {
-        return new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }).format(preco)
+        return new Intl.NumberFormat('pt-BR', { 
+          style: 'currency', 
+          currency: 'BRL' 
+        }).format(preco || 0)
       }
     },
     mounted() {

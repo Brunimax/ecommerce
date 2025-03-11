@@ -32,21 +32,5 @@ public class ItemPedidoController {
         return ResponseEntity.ok(itens);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ItemPedido> buscarItemPorId(@PathVariable Long id) {
-        ItemPedido item = itemPedidoService.buscarItemPedidoPorId(id);
-        return ResponseEntity.ok(item);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ItemPedido> atualizarItem(@PathVariable Long id, @RequestBody ItemPedido itemAtualizado) {
-        ItemPedido itemAtualizadoRetornado = itemPedidoService.atualizarItemPedido(id, itemAtualizado);
-        return ResponseEntity.ok(itemAtualizadoRetornado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarItem(@PathVariable Long id) {
-        itemPedidoService.deletarItemPedido(id);
-        return ResponseEntity.noContent().build();
-    }
+    
 }

@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.ecommerce.controller.ItemPedidoControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.857 s <<< FAILURE! - in com.ecommerce.controller.ItemPedidoControllerTest
-testCriarItemPedido  Time elapsed: 0.075 s  <<< FAILURE!
-java.lang.AssertionError: JSON path "$.id" expected:<1> but was:<null>
-	at com.ecommerce.controller.ItemPedidoControllerTest.testCriarItemPedido(ItemPedidoControllerTest.java:40)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.631 s <<< FAILURE! - in com.ecommerce.controller.ItemPedidoControllerTest
+testCriarItemPedido  Time elapsed: 0.024 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<201> but was:<403>
+	at com.ecommerce.controller.ItemPedidoControllerTest.testCriarItemPedido(ItemPedidoControllerTest.java:39)
 

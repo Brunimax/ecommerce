@@ -1,4 +1,24 @@
 -------------------------------------------------------------------------------
 Test set: com.ecommerce.controller.PedidoControllerTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.927 s - in com.ecommerce.controller.PedidoControllerTest
+Tests run: 5, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 0.644 s <<< FAILURE! - in com.ecommerce.controller.PedidoControllerTest
+testBuscarPedidoPorId  Time elapsed: 0.025 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<401>
+	at com.ecommerce.controller.PedidoControllerTest.testBuscarPedidoPorId(PedidoControllerTest.java:65)
+
+testListarTodosPedidos  Time elapsed: 0.003 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<401>
+	at com.ecommerce.controller.PedidoControllerTest.testListarTodosPedidos(PedidoControllerTest.java:52)
+
+testAtualizarPedido  Time elapsed: 0.008 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<403>
+	at com.ecommerce.controller.PedidoControllerTest.testAtualizarPedido(PedidoControllerTest.java:80)
+
+testCriarPedido  Time elapsed: 0.009 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<201> but was:<403>
+	at com.ecommerce.controller.PedidoControllerTest.testCriarPedido(PedidoControllerTest.java:41)
+
+testDeletarPedido  Time elapsed: 0.005 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<204> but was:<403>
+	at com.ecommerce.controller.PedidoControllerTest.testDeletarPedido(PedidoControllerTest.java:89)
+

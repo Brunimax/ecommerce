@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.ecommerce.controller.EnderecoControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.586 s - in com.ecommerce.controller.EnderecoControllerTest
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3.094 s <<< FAILURE! - in com.ecommerce.controller.EnderecoControllerTest
+testCriarEndereco  Time elapsed: 0.113 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<201> but was:<403>
+	at com.ecommerce.controller.EnderecoControllerTest.testCriarEndereco(EnderecoControllerTest.java:41)
+

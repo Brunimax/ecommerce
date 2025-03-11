@@ -13,12 +13,12 @@ public class ItemPedido implements Serializable {
 
     @ManyToOne
     @MapsId("pedidoId") // Vincula ao pedidoId na chave composta
-    @JoinColumn(name = "pedido_id", insertable = false, updatable = false)
+    @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
     @ManyToOne
     @MapsId("produtoId") // Vincula ao produtoId na chave composta
-    @JoinColumn(name = "produto_id", insertable = false, updatable = false)
+    @JoinColumn(name = "produto_id")
     private Produto produto;
 
     private Integer quantidade;

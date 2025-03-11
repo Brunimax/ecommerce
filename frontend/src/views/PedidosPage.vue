@@ -3,16 +3,16 @@
     <AppHeader />
     <BackgroundWrapper>
       <v-container>
+        <!-- Lista de Pedidos -->
         <ListaPedidos 
           :pedidos="pedidos"
           :carregando="carregando"
           @criar="abrirNovoPedido"
-          @editar="abrirEdicao"
-          @excluir="abrirExclusao"
           @visualizar="abrirVisualizacao"
+          @mudarStatus="abrirMudarStatus"
         />
 
-        <!-- Modal de Edição/Criação -->
+        <!-- Modal de Criação/Edição -->
         <FormularioPedido 
           v-if="mostrarFormulario"
           :pedido="pedidoSelecionado"
@@ -27,12 +27,12 @@
           @fechar="fecharModalVisualizacao"
         />
 
-        <!-- Modal de Confirmação -->
-        <DialogoConfirmacao 
-          v-model="mostrarConfirmacaoExclusao"
-          titulo="Confirmar Exclusão"
-          mensagem="Tem certeza que deseja excluir este pedido?"
-          @confirmar="excluirPedido"
+        <!-- Modal de Mudança de Status -->
+        <MudarStatusPedido
+          v-if="mostrarMudarStatus"
+          :pedido="pedidoSelecionado"
+          @fechar="fecharModalMudarStatus"
+          @salvar="salvarStatus"
         />
       </v-container>
     </BackgroundWrapper>
@@ -42,27 +42,25 @@
 <script>
 import ListaPedidos from '@/components/pedidos/ListaPedidos'
 import FormularioPedido from '@/components/pedidos/FormularioPedido'
-import DialogoConfirmacao from '@/components/pedidos/DialogoConfirmacao'
 import VisualizacaoPedido from '@/components/pedidos/VisualizacaoPedido'
+import MudarStatusPedido from '@/components/pedidos/MudarStatusPedido'
 import api from '@/services/api'
 
 export default {
   components: {
     ListaPedidos,
     FormularioPedido,
-    DialogoConfirmacao,
-    VisualizacaoPedido
+    VisualizacaoPedido,
+    MudarStatusPedido
   },
-  data() {
-    return {
-      pedidos: [],
-      pedidoSelecionado: null,
-      mostrarFormulario: false,
-      mostrarVisualizacao: false,
-      mostrarConfirmacaoExclusao: false,
-      carregando: false
-    }
-  },
+  data: () => ({
+    pedidos: [],
+    pedidoSelecionado: null,
+    mostrarFormulario: false,
+    mostrarVisualizacao: false,
+    mostrarMudarStatus: false,
+    carregando: false
+  }),
   async mounted() {
     await this.carregarPedidos()
   },
@@ -70,15 +68,8 @@ export default {
     async carregarPedidos() {
       try {
         this.carregando = true
-        const response = await api.get('/pedidos?_embed=itens,endereco')
-        
-        // Normalizar os dados recebidos do backend para camelCase
-        this.pedidos = response.data.map(p => ({
-          ...p,
-          nomeCliente: p.nome_cliente || p.nomeCliente, // Converter snake_case para camelCase
-          endereco: p.endereco || {}
-        }))
-        
+        const response = await api.get('/pedidos')
+        this.pedidos = response.data
       } catch (error) {
         console.error('Erro ao carregar pedidos:', error)
       } finally {
@@ -87,50 +78,42 @@ export default {
     },
 
     abrirNovoPedido() {
-      this.pedidoSelecionado = { 
-        nomeCliente: '', 
-        status: 'CRIADO', 
+      this.pedidoSelecionado = {
+        nomeCliente: '',
+        status: 'CRIADO',
         endereco: {},
-        itens: []
+        produtos: []
       }
       this.mostrarFormulario = true
     },
 
-    abrirEdicao(pedido) {
-      this.pedidoSelecionado = { 
-        ...pedido,
-        nomeCliente: pedido.nome_cliente || pedido.nomeCliente // Garantir ambos os casos
+    async abrirVisualizacao(pedido) {
+      try {
+        this.carregando = true
+        const response = await api.get(`/pedidos/pedidosProdutos/${pedido.id}`)
+        
+        // Ajuste para mapear corretamente o DTO recebido
+        this.pedidoSelecionado = response.data
+        
+        this.mostrarVisualizacao = true
+      } catch (error) {
+        console.error('Erro ao carregar detalhes:', error)
+      } finally {
+        this.carregando = false
       }
-      this.mostrarFormulario = true
     },
 
-    abrirExclusao(pedido) {
+    abrirMudarStatus(pedido) {
       this.pedidoSelecionado = pedido
-      this.mostrarConfirmacaoExclusao = true
-    },
-
-    abrirVisualizacao(pedido) {
-      this.pedidoSelecionado = { 
-        ...pedido,
-        nomeCliente: pedido.nome_cliente || pedido.nomeCliente // Garantir ambos os casos
-      }
-      this.mostrarVisualizacao = true
+      this.mostrarMudarStatus = true
     },
 
     async salvarPedido(pedido) {
       try {
-        const payload = {
-          ...pedido,
-          nome_cliente: pedido.nomeCliente, // Converter para snake_case para o backend
-          endereco_id: pedido.endereco?.id || null // Garantir consistência do endereço
-        }
-
-        if (pedido.id) {
-          await api.put(`/pedidos/${pedido.id}`, payload)
-        } else {
-          await api.post('/pedidos', payload)
-        }
-
+        const url = pedido.id ? `/pedidos/${pedido.id}` : '/pedidos'
+        const method = pedido.id ? 'put' : 'post'
+        
+        await api[method](url, pedido)
         await this.carregarPedidos()
         this.fecharModalFormulario()
       } catch (error) {
@@ -138,13 +121,16 @@ export default {
       }
     },
 
-    async excluirPedido() {
+    async salvarStatus(pedidoAtualizado) {
       try {
-        await api.delete(`/pedidos/${this.pedidoSelecionado.id}`)
-        await this.carregarPedidos()
-        this.fecharModalExclusao()
+        await api.patch(`/pedidos/${pedidoAtualizado.id}/status`, null, {
+          params: { status: pedidoAtualizado.status }
+        });
+        
+        await this.carregarPedidos();
+        this.fecharModalMudarStatus();
       } catch (error) {
-        console.error('Erro ao excluir pedido:', error)
+        console.error('Erro ao atualizar status:', error);
       }
     },
 
@@ -158,8 +144,8 @@ export default {
       this.pedidoSelecionado = null
     },
 
-    fecharModalExclusao() {
-      this.mostrarConfirmacaoExclusao = false
+    fecharModalMudarStatus() {
+      this.mostrarMudarStatus = false
       this.pedidoSelecionado = null
     }
   }

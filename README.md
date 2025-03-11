@@ -33,15 +33,15 @@ ecommerce/
 - **JUnit 5 + Mockito** (Testes)
 
 ### Frontend (Vue.js)
-- **Vue 3** (Composition API)
-- **Vuetify 3** (UI Framework)
+- **Vue 2** (Composition API)
+- **Vuetify 2** (UI Framework)
 - **Vue Router** (Navegação)
 - **Axios** (HTTP Client)
 - **Vue The Mask** (Máscaras de formulário)
 
 ## Pré-requisitos
 
-- **Java 17+**
+- **Java 11+**
 - **Maven**
 - **Node.js 18+**
 - **Docker**

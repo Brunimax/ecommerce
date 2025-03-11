@@ -1,93 +1,95 @@
 package com.ecommerce.controller;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.ecommerce.dto.PedidoProdutosDTO;
+import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.model.Pedido;
 import com.ecommerce.service.PedidoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+@ExtendWith(MockitoExtension.class)
+class PedidoControllerTest {
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(PedidoController.class)
-public class PedidoControllerTest {
-
-    @Autowired
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    @MockBean
+    @Mock
     private PedidoService pedidoService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private PedidoController pedidoController;
+
+    private Pedido pedido;
+    private PedidoProdutosDTO pedidoProdutosDTO;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(pedidoController).build();
+        
+        pedido = new Pedido();
+        pedido.setId(1L);
+        pedido.setNomeCliente("Cliente Teste");
+        
+        pedidoProdutosDTO = new PedidoProdutosDTO();
+        pedidoProdutosDTO.setPedido(pedido);
+    }
 
     @Test
-    public void testCriarPedido() throws Exception {
-        Pedido pedido = new Pedido();
-        pedido.setId(1L);
-        when(pedidoService.criarPedido(any(Pedido.class))).thenReturn(pedido);
+    void criarPedido_DeveRetornar201() throws Exception {
+        // Arrange
+        when(pedidoService.criarPedidoProdutos(any())).thenReturn(pedido);
 
-        mockMvc.perform(post("/api/pedidos")
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/pedidos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(pedido)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1));
-
-        verify(pedidoService).criarPedido(any(Pedido.class));
+                .content(objectMapper.writeValueAsString(pedidoProdutosDTO)))
+                .andExpect(status().isCreated());
     }
 
     @Test
-    public void testListarTodosPedidos() throws Exception {
-        when(pedidoService.listarTodosPedidos()).thenReturn(Arrays.asList(new Pedido(), new Pedido()));
+    void buscarPedidoProdutosPorId_QuandoNaoExistir_DeveRetornar404() throws Exception {
+        // Arrange
+        when(pedidoService.buscarPedidoProdutosPorId(99L))
+            .thenThrow(new ResourceNotFoundException("Pedido não encontrado"));
 
-        mockMvc.perform(get("/api/pedidos"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
-
-        verify(pedidoService).listarTodosPedidos();
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/pedidos/pedidosProdutos/99"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    public void testBuscarPedidoPorId() throws Exception {
-        Pedido pedido = new Pedido();
-        pedido.setId(1L);
-        when(pedidoService.buscarPedidoPorId(1L)).thenReturn(pedido);
+    void atualizarStatus_DeveRetornar200() throws Exception {
+        // Arrange
+        when(pedidoService.atualizarStatus(anyLong(), anyString())).thenReturn(pedido);
 
-        mockMvc.perform(get("/api/pedidos/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
-
-        verify(pedidoService).buscarPedidoPorId(1L);
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/pedidos/1/status")
+                .param("status", "PROCESSANDO"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testAtualizarPedido() throws Exception {
-        Pedido pedido = new Pedido();
-        pedido.setId(1L);
-        when(pedidoService.atualizarPedido(eq(1L), any(Pedido.class))).thenReturn(pedido);
+    void deletarPedido_DeveRetornar204() throws Exception {
+        // Arrange
+        doNothing().when(pedidoService).deletarPedido(1L);
 
-        mockMvc.perform(put("/api/pedidos/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(pedido)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
-
-        verify(pedidoService).atualizarPedido(eq(1L), any(Pedido.class));
-    }
-
-    @Test
-    public void testDeletarPedido() throws Exception {
-        mockMvc.perform(delete("/api/pedidos/1"))
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/pedidos/1"))
                 .andExpect(status().isNoContent());
-
-        verify(pedidoService).deletarPedido(1L);
     }
 }

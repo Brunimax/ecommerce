@@ -1,6 +1,5 @@
 package com.ecommerce.service;
 
-import com.ecommerce.dto.PedidoMensagemDTO;
 import com.ecommerce.dto.PedidoProdutosDTO;
 import com.ecommerce.dto.ProdutoDTO;
 import com.ecommerce.exception.ResourceNotFoundException;
@@ -8,7 +7,6 @@ import com.ecommerce.model.Endereco;
 import com.ecommerce.model.ItemPedido;
 import com.ecommerce.model.ItemPedidoId;
 import com.ecommerce.model.Pedido;
-import com.ecommerce.model.Produto;
 import com.ecommerce.producer.PedidoProducer;
 import com.ecommerce.repository.EnderecoRepository;
 import com.ecommerce.repository.ItemPedidoRepository;

@@ -33,8 +33,8 @@ ecommerce/
 - **JUnit 5 + Mockito** (Testes)
 
 ### Frontend (Vue.js)
-- **Vue 2** (Composition API)
-- **Vuetify 2** (UI Framework)
+- **Vue 2.6.14** (Composition API)
+- **Vuetify 2.7** (UI Framework)
 - **Vue Router** (Navegação)
 - **Axios** (HTTP Client)
 - **Vue The Mask** (Máscaras de formulário)
